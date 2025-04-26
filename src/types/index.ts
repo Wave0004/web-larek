@@ -9,7 +9,7 @@ export enum PaymentType {
     image: string;
     title: string;
     category: string;
-    price: number;
+    price: number | null;
   }
   
   export interface ICustomerModel {
