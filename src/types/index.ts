@@ -1,8 +1,14 @@
+
+export interface IDataApi {
+  getItems(): Promise<{items: IItem[]}>;
+  getItem(id: string): Promise<IItem>;
+  sendOrder(data: IOrder): Promise<object>;
+}
+
 export enum PaymentType {
   Online = 'online',
   Cash = 'cash',
 }
-
 
 export interface IItem {
   id: string;
@@ -14,101 +20,68 @@ export interface IItem {
 }
 
 
-export interface ICustomerModel {
-  customerFullInfo: ICustomer;
-  validateCustomerAddress(data: string): boolean;
-  validateCustomerEmail(data: string): boolean;
-  validateCustomerPhoneNumber(data: string): boolean;
-}
-
-
-export interface ICustomer {
-  paymentType: PaymentType;
+export interface IOrderModel {
+  customerFullInfo: IOrder;
+  payment: PaymentType;
   address: string;
   email: string;
-  phoneNumber: string;
+  phone: string;
+  items: string[];
+  total: number;
 }
 
-
-export interface IItemsData {
-  items: IItem[];
-  setItems(items: IItem[]): void;
-  getItem(id: string): IItem;
-  preview: string | null; 
+// данные заказа
+export interface IOrder {
+  payment: PaymentType;
+  address: string;
+  email: string;
+  phone: string;
+  items: string[];
+  total: number;
 }
 
-export type TItemBaseInfo = Pick<IItem, 'category' | 'title' | 'image' | 'price' | 'id'>;
-
-export type TItemShortInfo = Pick<IItem, 'title' | 'price' | 'id'>;
-
-export type TItemFullInfo = Pick<IItem, 'image' | 'category' | 'title' | 'description' | 'price' | 'id'>;
-
+// интерфейс корзины
 export interface ICartModel {
-  items: Map<string, number>;
   add(item: Partial<IItem>): void;
   remove(item: Partial<IItem>): void;
+  clear(): void;
+  total: number;
 }
 
+// интерфейс eventEmitter
 export interface IEventEmitter {
-  emit: (event: string, data: unknown) => void
+  emit: (event: string, data?: unknown) => void
 }
 
+// интерфейс корзины
 export interface ICartView {
-  render(): HTMLElement
+  addItem(item: HTMLElement, itemId: string, sum: number): void;
+  removeItem(itemId: string): void;
+  clear(): void;
 }
 
-export interface IContactsFormView {
-  render(): void;
-  toggleSubmitButton(): void;
-}
-
-export interface IOrderFormView {
-  form: HTMLFormElement;
-  paymentCashButton: HTMLButtonElement;
-  paymentCardButton: HTMLButtonElement;
-  submitButton: HTMLButtonElement;
-  adressInput: HTMLInputElement;
-
-  render(): HTMLFormElement;
-}
-
+// интерфейс товара
 export interface IItemView {
-  render(): HTMLElement;
-  category: HTMLSpanElement | null;
-  title: HTMLHeadingElement | HTMLSpanElement | null;
-  image: HTMLImageElement | null;
-  price: HTMLSpanElement | null;
-  description: HTMLParagraphElement | null;
-
-  addCartButton: HTMLButtonElement | null;
-  removeCartButton: HTMLButtonElement | null;
+  getCartItemView(element: HTMLElement): HTMLElement;
+  getModalItemView(element: HTMLElement): HTMLElement;
+  data: Partial<IItem>;
 }
 
-
+// интерфейс модального окна
 export interface IModalView {
   openModal: (element: HTMLElement) => void;
   closeModal: () => void;
 }
 
+// интерфейс базового класса вью
 export interface IView {
-  element: HTMLElement,
-  container: HTMLElement,
-  render(data?: unknown): HTMLElement
+  render(data?: unknown): HTMLElement;
+  toggleClass(element: HTMLElement, className: string): void;
 }
 
-
-export interface ModalOpenEventData {
+// данные для передачи в eventEmitter
+export interface IEventData {
   element: HTMLElement;
   data?: Partial<IItem>;
 }
-
-
-export type TOrder = [
-  payment: PaymentType,
-  email: string,
-  phone: string,
-  address: string,
-  total: number,
-  items: string[],
-]
 
